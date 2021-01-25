@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this::content})}">
+
+    <th:block th:fragment="content">
+
+        <h1 class="mt-4">Movie Modify Page</h1>
+
+        <form action="/movie/modify" method="post">
+
+            <input type="hidden" name="page" th:value="${requestDTO.page}">
+            <input type="hidden" name="mno" th:value="${dto.mno}">
+
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" class="form-control" name="title" th:value="${dto.title}">
+            </div>
+            <div class="form-group">
+                <label>Image Files</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input files" id="fileInput" multiple>
+                    <label class="custom-file-label" data-browse="Browse"></label>
+                </div>
+            </div>
+
+            <div class="box">
+
+            </div>
+
+            <style>
+                .uploadResult{
+                    width: 100%;
+                    background-color: gray;
+                    margin-top: 10px;
+                }
+                .uploadResult ul{
+                    display: flex;
+                    flex-flow: row;
+                    justify-content: center;
+                    align-items: center;
+                    vertical-align: top;
+                    overflow: auto;
+                }
+                .uploadResult ul li {
+                    list-style: none;
+                    padding: 10px;
+                    margin-left: 2em;
+                }
+                .uploadResult ul li img{
+                    width: 100px;
+                }
+            </style>
+
+            <div class="uploadResult">
+                <ul>
+                    <li th:each="movieImage: ${dto.imageDTOList}" th:data-file="${movieImage.getThumbnailURL()}">
+                        <img th:if="${movieImage.path!=null}"
+                             th:src="|/display?fileName=${movieImage.getThumbnailURL()}|">
+                    </li>
+                </ul>
+            </div>
+        </form>
+
+        <button type="button" class="btn btn-info modifyBtn">Modify</button>
+        <button type="button" class="btn btn-danger removeBtn">Remove</button>
+        <button type="button" class="btn btn-outline-secondary listBtn">List</button>
+
+
+        <div class="imageModal modal" tabindex="-2" role="dialog">
+            <div class="modal-dialog modal-lg" role="documnet">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Pictures</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">$times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary"
+                                data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script th:inline="javascript">
+            $(document).ready(function() {
+
+                var mno = [[${dto.mno}]];
+                var page = $("input[name='page']");
+                var actionForm = $("form");
+
+                $(".listBtn").click(function (){
+
+                    actionForm.empty();
+                    actionForm.append(page);
+                    actionForm
+                        .attr("action", "/movie/list")
+                        .attr("method", "get");
+
+                    actionForm.submit();
+                });
+
+                $(".removeBtn").click(function (){
+
+                    actionForm
+                        .attr("action", "/movie/remove")
+                        .attr("method", "post")
+                        .submit();
+
+                });
+
+
+                $(".uploadResult li").click(function () {
+                    var file = $(this).data('file');
+                    console.log(file);
+
+                    $('.imageModal .modal-body').html("<img style='width:100%', src='/display?fileName=" + file + "&size=1'>")
+
+                    $(".imageModal").modal("show");
+                });
+            });
+        </script>
+    </th:block>
+</th:block>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>

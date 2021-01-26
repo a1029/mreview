@@ -22,6 +22,8 @@ public interface MovieService {
 
     void remove(Long mno);
 
+    Long modify(MovieDTO movieDTO);
+
     default MovieDTO entitiesToDTO(Movie movie, List<MovieImage> movieImages,
                                    Double avg, Long reviewCnt){
 

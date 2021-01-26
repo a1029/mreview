@@ -94,4 +94,37 @@ public class MovieServiceImpl implements MovieService{
         imageRepository.deleteByMno(mno);
         movieRepository.deleteById(mno);
     }
+
+    @Transactional
+    @Override
+    public Long modify(MovieDTO movieDTO) {
+
+        List<Object[]> result = movieRepository.getMovieWithAll(movieDTO.getMno());
+
+        Movie movie = (Movie)result.get(0)[0];
+
+        /*List<MovieImage> movieImageList = new ArrayList<>();
+        result.forEach(movieImage -> {
+            movieImageList.add((MovieImage) movieImage[1]);
+        });*/
+
+        movie.changeTitle(movieDTO.getTitle());
+
+        imageRepository.deleteByMno(movie.getMno());
+
+        List<MovieImageDTO> movieImageDTOList = movieDTO.getImageDTOList();
+
+        movieImageDTOList.forEach(movieImageDTO->{
+            MovieImage movieImage = MovieImage.builder()
+                    .path(movieImageDTO.getPath())
+                    .imgName(movieImageDTO.getImgName())
+                    .uuid(movieImageDTO.getUuid())
+                    .movie(movie)
+                    .build();
+            imageRepository.save(movieImage);
+        });
+        movieRepository.save(movie);
+
+        return movie.getMno();
+    }
 }

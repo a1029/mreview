@@ -102,6 +102,17 @@ public class MovieController {
                 log.error("delete file error: " + e.getMessage());
             }
         });
+    }
 
+
+    @PostMapping("/remove/{mno}")
+    public String modify(){
+
+        // 파일 전체 삭제, 서비스측에서 다시 삽입
+
+        //수정하고 수정된 게시글로 리다이렉팅
+
+        // 화면 수정
+        return "redirect:/movie/list";
     }
 }

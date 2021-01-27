@@ -1,5 +1,6 @@
 package org.zerock.mreview.controller;
 
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
@@ -54,7 +55,7 @@ public class MovieController {
     }
 
     @GetMapping({"/read", "/modify"})
-    public void read(long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
+    public void read(Long mno, @ModelAttribute("requestDTO") PageRequestDTO requestDTO, Model model){
         log.info("mno: " + mno);
 
         MovieDTO movieDTO = movieService.getMovie(mno);
@@ -105,14 +106,20 @@ public class MovieController {
     }
 
 
-    @PostMapping("/remove/{mno}")
-    public String modify(){
+    @PostMapping("/modify")
+    public String modify(MovieDTO movieDTO, @ModelAttribute("requestDTO")PageRequestDTO requestDTO,
+                         RedirectAttributes redirectAttributes){
 
-        // 파일 전체 삭제, 서비스측에서 다시 삽입
+        movieService.modify(movieDTO);
 
-        //수정하고 수정된 게시글로 리다이렉팅
+        // 수정된 조회화면으로
+        redirectAttributes.addAttribute("page", requestDTO.getPage());
+        redirectAttributes.addAttribute("type", requestDTO.getType());
+        redirectAttributes.addAttribute("keyword", requestDTO.getKeyword());
+        redirectAttributes.addAttribute("mno", movieDTO.getMno());
 
-        // 화면 수정
-        return "redirect:/movie/list";
+        return "redirect:/movie/read";
     }
+
+    // 등록화면에서 사진 첨부해놓고 등록 안하고 그냥 뒤로가기나 껐을때 사진 삭제 처리
 }

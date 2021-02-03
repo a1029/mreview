@@ -54,10 +54,14 @@
 
             <div class="uploadResult">
                 <ul>
-                    <li th:each="movieImage: ${dto.imageDTOList}" th:data-file="${movieImage.getThumbnailURL()}">
-                        <button type="button" data-file="${movieImage.getImageURL()}" class="btn-warning btn-sm">X</button><br>
-                        <img th:if="${movieImage.path!=null}"
-                             th:src="|/display?fileName=${movieImage.getThumbnailURL()}|">
+                    <li th:each="movieImage: ${dto.imageDTOList}" th:data-file="${movieImage.getThumbnailURL()}"
+                        th:data-name="${movieImage.imgName}" th:data-path="${movieImage.path}" th:data-uuid="${movieImage.uuid}">
+                        <div>
+                            <button type="button" th:data-file="${movieImage.getImageURL()}" class="btn-warning btn-sm">X</button><br>
+                            <img th:if="${movieImage.path!=null}"
+                                 th:src="|/display?fileName=${movieImage.getThumbnailURL()}|">
+                        </div>
+
                     </li>
                 </ul>
             </div>
@@ -176,6 +180,7 @@
                     var targetFile = $(this).data("file");
                     var targetLi = $(this).closest("li");
 
+                    console.log(targetFile);
                     $.ajax({
                         url: '/removeFile',
                         data: {fileName: targetFile},
@@ -220,6 +225,7 @@
 
                     $(".uploadResult li").each(function(i,obj){
                         var target = $(obj);
+
                         str += "<input type='hidden' name='imageDTOList["+i+"].imgName' value='"+
                             target.data('name') + "'>";
                         str += "<input type='hidden' name='imageDTOList["+i+"].path' value='"+

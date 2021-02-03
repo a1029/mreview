@@ -15,6 +15,7 @@ public class UploadResultDTO {
     private String folderPath;
 
     public String getImageURL(){
+
         try{
             return URLEncoder.encode(folderPath+"/"+uuid+"_"+fileName,"UTF-8");
         }catch(UnsupportedEncodingException e){
